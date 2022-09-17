@@ -11,26 +11,13 @@ on:
       - 'master'
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
+    
     steps:
       - 
         name: Checkout
         uses: actions/checkout@v2
-      -       
-        name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-      -     
-        name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-  
       -
         name: Login to ghcr
         if: github.event_name != 'pull_request'
@@ -39,6 +26,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      -       
+        name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
       -
         name: Build and push
         id: docker_build
@@ -49,8 +40,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ghcr.io/benchan79/simplewhale:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+    
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
