@@ -26,6 +26,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
       - 
+        name: Login to Docker hub
         uses: docker/login-action@v1 
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -39,7 +40,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ushamandya/simplewhale:latest
+          tags: benchan79/simplewhale:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       -
